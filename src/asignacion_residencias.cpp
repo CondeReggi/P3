@@ -7,7 +7,7 @@
 
 #include "../include/asignacion_residencias.h"
 #include "../include/asignacion.h"
-#include "../include/cola.h"
+#include "../include/pila.h"
 #include "../include/utils.h"
 #include <cstddef>
 
@@ -15,38 +15,40 @@
 //Proponen los hospitales
 Asignacion asignarResidencias(nat m, nat* C, nat n, nat** hPrefs, nat** ePrefs)
 {
-    Cola freeMen = crear_cola();
-    nat current;
-    nat current_hospital = 0;
-
-    nat* matches; //Array de matches para index (numero hospital) tal match (numero hombre)
-
+    Pila /* Gordon */ freeHospital = crear_pila();
     Asignacion result = crear_asignacion(); //Creo result para posteriormente llenarlo con matches
-
-    for(nat i = 0; i < m; i++){ 
-      matches[i - 1] = 0; //Inicializo en 0 todos los matches para los hospitales
-    }
+    nat current; nat current_student;
+    nat* next; nat* matches;
+    nat** ranking;
 
     for(nat i = 0; i < n; i++){ 
-      encolar(i, freeMen); //Pongo en la cola para que todos los hospitales esten libres en un principio
+      for(nat j = 0; j < n; j++){ 
+        ranking[i][ePrefs[i][j]] = j;
+      }
     }
 
-    while(!es_vacia_cola(freeMen) && current_hospital <= n){ //Mientras hospitales dispoibles y hombres en el rango de cantidad de hombres
-      current = frente(freeMen);
+    for (nat i = 1; i <= m; i++) {
+      apilar(i, freeHospital);
+      next[i] = 1;
+    }
+    for(nat i = 0; i < n; i++){
+      matches[i] = 0;
+    }
 
-      if(matches[current_hospital] == 0){ //Si no esta asignada la mujer para el hombre dale que es tarde
-			  matches[current_hospital] = current;
-			  desencolar(freeMen);
+    while(!es_vacia_pila(freeHospital)){
+      current = cima(freeHospital);
+      current_student = hPrefs[current][next[current]];
 
-		  }else if(hPrefs[current_hospital][current] < hPrefs[current_hospital][matches[current_hospital]]){ //Fijo prioridad del hospital
-        nat ex_man = matches[current_hospital]; //Agarro a la persona y la encolo
-        desencolar(freeMen);
-        matches[current_hospital] = current;
-        encolar((nat)ex_man , freeMen);
+      if(matches[current_student] == 0){
+        matches[current_student] = current;
+        desapilar(freeHospital);
+
+      }else if(ranking[current][current_student] < ranking[current][matches[current_student]]){
+        desapilar(freeHospital);
+        apilar(matches[current_student], freeHospital);
+        matches[current_student] = current;
       }
-
-      current_hospital++;
-    }   
+    }
 
     for(int i = 0; i < n; i++){ //Recorro y voy asignando, se supone en maches esta todo
       par nuevo;
@@ -55,8 +57,7 @@ Asignacion asignarResidencias(nat m, nat* C, nat n, nat** hPrefs, nat** ePrefs)
       insertar_par(nuevo, result);
     }
 
-    destruir_cola(freeMen); //Elimino la cola
+    destruir_pila(freeHospital); //Elimino la cola
     delete(matches); //Elimino el array de matches
-    
     return result; // se debe retornar algo de tipo asignacion
 }
