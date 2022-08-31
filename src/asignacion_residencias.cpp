@@ -17,8 +17,10 @@ Asignacion asignarResidencias(nat m, nat* C, nat n, nat** hPrefs, nat** ePrefs)
 {
     Pila /* Gordon */ freeHospital = crear_pila();
     Asignacion result = crear_asignacion(); //Creo result para posteriormente llenarlo con matches
-    nat current; nat current_student;
-    nat* next; nat* matches;
+    nat current; 
+    nat current_student;
+    nat* next = new nat[m]; 
+    nat* matches = new nat[n];
     nat** ranking;
 
     for(nat i = 0; i < n; i++){ 
@@ -60,6 +62,7 @@ Asignacion asignarResidencias(nat m, nat* C, nat n, nat** hPrefs, nat** ePrefs)
 
     destruir_pila(freeHospital); //Elimino la cola
     delete(matches); //Elimino el array de matches
+    delete(next); //Elimino el array de next
     return result; // se debe retornar algo de tipo asignacion
 }
 
