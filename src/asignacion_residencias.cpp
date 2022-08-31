@@ -32,14 +32,15 @@ Asignacion asignarResidencias(nat m, nat* C, nat n, nat** hPrefs, nat** ePrefs)
       next[i] = 1;
     }
     for(nat i = 0; i < n; i++){
-      matches[i] = 0;
+      matches[i] = -1;
     }
 
     while(!es_vacia_pila(freeHospital)){
       current = cima(freeHospital);
       current_student = hPrefs[current][next[current]];
+      next[current]++;
 
-      if(matches[current_student] == 0){
+      if(matches[current_student] == -1){
         matches[current_student] = current;
         desapilar(freeHospital);
 
@@ -61,3 +62,5 @@ Asignacion asignarResidencias(nat m, nat* C, nat n, nat** hPrefs, nat** ePrefs)
     delete(matches); //Elimino el array de matches
     return result; // se debe retornar algo de tipo asignacion
 }
+
+
