@@ -21,7 +21,7 @@ Asignacion asignarResidencias(nat m, nat* C, nat n, nat** hPrefs, nat** ePrefs)
     nat current_student;
     nat* next = new nat[m]; 
     nat* matches = new nat[n];
-    nat** ranking;
+    nat** ranking = new nat*[n];
 
     for(nat i = 0; i < n; i++){ 
       for(nat j = 0; j < n; j++){ 
@@ -29,12 +29,12 @@ Asignacion asignarResidencias(nat m, nat* C, nat n, nat** hPrefs, nat** ePrefs)
       }
     }
 
-    for (nat i = 1; i <= m; i++) {
+    for (nat i = 1; i <= m; i++) { //Pongo de 1 a M no de 0 a M-1
       apilar(i, freeHospital);
       next[i] = 1;
     }
     for(nat i = 0; i < n; i++){
-      matches[i] = -1;
+      matches[i] = 0;
     }
 
     while(!es_vacia_pila(freeHospital)){
@@ -42,7 +42,7 @@ Asignacion asignarResidencias(nat m, nat* C, nat n, nat** hPrefs, nat** ePrefs)
       current_student = hPrefs[current][next[current]];
       next[current]++;
 
-      if(matches[current_student] == -1){
+      if(matches[current_student] == 0){
         matches[current_student] = current;
         desapilar(freeHospital);
 
@@ -54,15 +54,19 @@ Asignacion asignarResidencias(nat m, nat* C, nat n, nat** hPrefs, nat** ePrefs)
     }
 
     for(int i = 0; i < n; i++){ //Recorro y voy asignando, se supone en maches esta todo
-      par nuevo;
-      nuevo.eid = i;
-      nuevo.hid = matches[i];
-      insertar_par(nuevo, result);
+      par *nuevo = new par;
+      nuevo->eid = i;
+      nuevo->hid = matches[i] - 1;
+      insertar_par(*nuevo, result);
+      delete(nuevo);
     }
 
     destruir_pila(freeHospital); //Elimino la cola
+
+    delete(ranking); //Elimino el array de ranking
     delete(matches); //Elimino el array de matches
     delete(next); //Elimino el array de next
+    
     return result; // se debe retornar algo de tipo asignacion
 }
 
