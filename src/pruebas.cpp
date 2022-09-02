@@ -46,6 +46,7 @@ Asignacion asignarResidencias(nat m, nat* C, nat n, nat** hPrefs, nat** ePrefs)
       current = cima(freeHospital);
       printf ("Current vale:%d\n", current); 
       current_student = hPrefs[current - 1][next[current - 1]];
+
       printf ("current_student vale:%d\n", current_student);
       next[current - 1] = next[current - 1] + 1;
       //printf ("current:%d\n",current); 
@@ -55,10 +56,14 @@ Asignacion asignarResidencias(nat m, nat* C, nat n, nat** hPrefs, nat** ePrefs)
         matches[current_student] = current - 1;
         desapilar(freeHospital);
         printf ("entre if - "); 
-      }else if(ranking[current - 1][current_student] > ranking[current - 1][matches[current_student]]){
+      }else if(ranking[current_student][current - 1] < ranking[current_student][matches[current_student]]){ //Aca el ranking tiene mayor prioruidad el estudiante de matches[current_student]
         desapilar(freeHospital);
+
+        //Capaz no es asi
+
         apilar(matches[current_student], freeHospital);
         matches[current_student] = current - 1;
+      
         printf ("entre else if - "); 
       }else{
         printf ("entre else - "); 
