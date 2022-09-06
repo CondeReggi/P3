@@ -26,7 +26,7 @@ Asignacion asignarResidencias(nat m, nat *C, nat n, nat **hPrefs, nat **ePrefs)
   }
 
   for (nat i = 0; i < m; i++)
-  { // Pongo de 1 a M no de 0 a M-1
+  { 
     apilar(i, freeHospital);
     next[i] = 0;
   }
@@ -34,13 +34,11 @@ Asignacion asignarResidencias(nat m, nat *C, nat n, nat **hPrefs, nat **ePrefs)
   {
     matches[i] = -1;
   }
-  int sum = 1;
+
   current = cima(freeHospital);
   while (!es_vacia_pila(freeHospital) && next[current] < (int)n)
   {
-    sum = sum + 1;
     current = cima(freeHospital);
-
     if(C[current] == 0){
       desapilar(freeHospital);
       continue;
