@@ -42,10 +42,49 @@ Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
     auxiliar2 = resto_datos(auxiliar2);
   }
 
+  destruir_lista_datos(auxiliar1); 
+  destruir_lista_datos(auxiliar2);
+
   // Con esto finalizamos la creacion del grafo
   // Buscar orden Topologico
+  bool existe_ciclo = false;
+  Lista lista_vertices = vertices(g);
+
+  Lista cronologia = crear_lista();
+  Grafo auxiliar = g;
+  Lista vertices_auxiliar = vertices(auxiliar);
+
+  for(nat i = 1; i <= n; i++){
+    if(auxiliar->celdas[i].ingrado == 0){
+      insertar_al_final(i, cronologia);
+      remover(i, vertices_auxiliar);
+    }
+  }
+
+  while(!es_vacia_lista(vertices_auxiliar)){
+    insertar_al_final(vertices_auxiliar->elem, cronologia);
+    Lista aBorrar = vertices_auxiliar;
+    vertices_auxiliar = vertices_auxiliar->sig;
+    delete aBorrar;
+  }
+
+  if(!es_vacia_lista(vertices_auxiliar)){
+    return cr
+  }
+
+  nat cant_vertices = cantidad_vertices(g);
+
+
+
+  //ordenTopologico(primerVertice, g, lista_vertices, visitado);
+
+
 
   bool existe_cr_consistente = false;
+
+  
+
+
   Cronologia cr = new evento[2 * n];
 
   if (existe_cr_consistente)
@@ -59,6 +98,17 @@ Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
     return NULL;
   }
 }
+
+// void ordenTopologico(Vertice v, Grafo g, Lista &lista, int* &visitado){
+//   visitado[v] = true;
+//   for(int i = 0; i < v->adyacentes; i++){
+//     if(visitado[adyacentes[v][i]] == false){
+//       ordenTopologico(adyacentes[v][i], g , lista, visitado);
+//     }else{
+//       break;
+//     }
+//   }
+// }
 
 // Crear una pila
 // Crear un array de visitados
