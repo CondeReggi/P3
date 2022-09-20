@@ -14,6 +14,7 @@
 
 Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
 {
+  int* array = new int[2 * n + 1];
   // Crear grafo
   Grafo g = crear_grafo(2 * n - 1, true);
 
@@ -23,110 +24,108 @@ Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
   // Agrego los no incidentes sabemos que hay todo. faltan los solapados que esos pueden ir de uno a otro
   while (!es_vacia_lista_datos(auxiliar1))
   {
-    if (!existe_vertice(id1(primer_dato(auxiliar1)), g)) agregar_vertice(id1(primer_dato(auxiliar1)), g);
-    if (!existe_vertice(id2(primer_dato(auxiliar1)), g)) agregar_vertice(id2(primer_dato(auxiliar1)), g);
+    if (!existe_vertice(id1(primer_dato(auxiliar1)), g)){
+      array[id1(primer_dato(auxiliar1))] = 0;
+      agregar_vertice(id1(primer_dato(auxiliar1)), g);
+    }
+    if (!existe_vertice(id2(primer_dato(auxiliar1)), g)){
+      array[id2(primer_dato(auxiliar1))] = 0;
+      agregar_vertice(id2(primer_dato(auxiliar1)), g);
+    }
 
     // Como son incidentes entonces: agregamos una arista (id1,id2) de tipo1
     agregar_arista(id1(primer_dato(auxiliar1)), id2(primer_dato(auxiliar1)), g);
+    array[id2(primer_dato(auxiliar1))]++;
     auxiliar1 = resto_datos(auxiliar1);
   }
 
   while (!es_vacia_lista_datos(auxiliar2))
   {
-    if (!existe_vertice(id1(primer_dato(auxiliar2)), g)) agregar_vertice(id1(primer_dato(auxiliar2)), g);
-    if (!existe_vertice(id2(primer_dato(auxiliar2)), g)) agregar_vertice(id2(primer_dato(auxiliar2)), g);
+    if (!existe_vertice(id1(primer_dato(auxiliar2)), g)){
+      array[id1(primer_dato(auxiliar2))] = 0;
+      agregar_vertice(id1(primer_dato(auxiliar2)), g);
+    }
+    if (!existe_vertice(id2(primer_dato(auxiliar2)), g)){
+      array[id2(primer_dato(auxiliar2))] = 0;
+      agregar_vertice(id2(primer_dato(auxiliar2)), g);
+    }
 
     // Como son adyacentes entonces: agregamos una arista (id1,id2) y (id2,id1) de tipo2
     agregar_arista(id1(primer_dato(auxiliar2)), id2(primer_dato(auxiliar2)), g);
     agregar_arista(id2(primer_dato(auxiliar2)), id1(primer_dato(auxiliar2)), g);
+    array[id2(primer_dato(auxiliar2))]++;
+    array[id1(primer_dato(auxiliar2))]++;
     auxiliar2 = resto_datos(auxiliar2);
   }
 
-  destruir_lista_datos(auxiliar1); 
+  destruir_lista_datos(auxiliar1);
   destruir_lista_datos(auxiliar2);
 
   // Con esto finalizamos la creacion del grafo
   // Buscar orden Topologico
-  bool existe_ciclo = false;
-  Lista lista_vertices = vertices(g);
+  Cronologia cr = new evento[2 * n];
+  Lista vertices_de_g = vertices(g);
+  int index = 0;
+  bool existeAlMenosUnNoIncidente = false;
+  for (int i = 1; i <= cantidad_vertices(g); i++){
+    if (in_grado(i, g) == 0){
+      // Aca ya se que todos tienen 0 aristas incidentes
+      evento nuevo;
+      nuevo.id = i;
+      nuevo.tipo = /* ¿como se si se muere o nace? */;
+      cr[index] = nuevo;
+      index = index + 1;
 
-  Lista cronologia = crear_lista();
-  Grafo auxiliar = g;
-  Lista vertices_auxiliar = vertices(auxiliar);
+      Lista adyacentes_a_v = adyacentes(i, g);
 
-  for(nat i = 1; i <= n; i++){
-    if(auxiliar->celdas[i].ingrado == 0){
-      insertar_al_final(i, cronologia);
-      remover(i, vertices_auxiliar);
+      // Actualizo las adyacencias de los nodos que estan conectados
+      while (!es_vacia_lista(adyacentes_a_v)){
+        g->celda[primero(adyacentes_a_v)].ingrado--;
+        g->celda[primero(adyacentes_a_v)].outgrado--;
+        remover_al_inicio(adyacentes_a_v);
+      }
+
+      destruir_lista(adyacentes_a_v);
+    }else{
+      existeAlMenosUnNoIncidente = true;
     }
   }
 
-  while(!es_vacia_lista(vertices_auxiliar)){
-    insertar_al_final(vertices_auxiliar->elem, cronologia);
-    Lista aBorrar = vertices_auxiliar;
-    vertices_auxiliar = vertices_auxiliar->sig;
-    delete aBorrar;
-  }
-
-  if(!es_vacia_lista(vertices_auxiliar)){
-    return cr
-  }
-
-  nat cant_vertices = cantidad_vertices(g);
-
-
-
-  //ordenTopologico(primerVertice, g, lista_vertices, visitado);
-
-
-
-  bool existe_cr_consistente = false;
-
-  
-
-
-  Cronologia cr = new evento[2 * n];
-
-  if (existe_cr_consistente)
-  { // si existe, retornarla en cr
-    return cr;
-  }
-  else
-  { // si no existe, liberar la memoria asociada a cr y retornar NULL
+  if (existeAlMenosUnNoIncidente){
+    return NULL;
+  }else{
     destruir_grafo(g);
     delete[] cr;
-    return NULL;
+    delete[] array;
+    return cr;
   }
+
+  //Otra alternativa
+  int cantidad_sin_incidentes;
+  Lista L; /* Empty list that will contain the sorted elements */
+  Lista S; /* S ← Set of all nodes with no incoming edges */
+
+  for (int i = 1; i <= cantidad_vertices(g); i++){
+    if(in_grado(i, g) == 0){
+      insertar_al_inicio(i, S);
+    }
+  }
+
+  while(!es_vacia_lista(S)){
+    nat first = primero(S);
+    remover_al_inicio(S);
+    insertar_al_final(first, L);
+
+    
+    Lista adyacentes_a_v = adyacentes(first, g);
+    while (!es_vacia_lista(adyacentes_a_v)){
+      //Remove arista (a1, b1) del grafo
+
+
+      array[primero(adyacentes_a_v)]--;
+      remover_al_inicio(adyacentes_a_v);
+    }
+  }
+
+
 }
-
-// void ordenTopologico(Vertice v, Grafo g, Lista &lista, int* &visitado){
-//   visitado[v] = true;
-//   for(int i = 0; i < v->adyacentes; i++){
-//     if(visitado[adyacentes[v][i]] == false){
-//       ordenTopologico(adyacentes[v][i], g , lista, visitado);
-//     }else{
-//       break;
-//     }
-//   }
-// }
-
-// Crear una pila
-// Crear un array de visitados
-// inicializar todas los vertices del Grafo visitados[v] = false
-//  for(int i = 0; i < g->CantidadVertices; i++){
-//    if(visitado[i] == false){
-//      odenarTopologico(i, visitado, pila);
-//    }
-//  }
-
-// void odenarTopologico(int v, boolean *visitado, Pila pila, Grafo *g){
-//   visitado[v] == true;
-//   int i;
-//   const adyacentes_a_v = g->vertices[v]->adyacentes;
-//   while(adyacentes_a_v->next != nullptr){
-//     i = adyacentes_a_v->next;
-//     if(!visitado[i]){
-//       odenarTopologico(i, visitado, pila, g);
-//     }
-//   }
-// }
