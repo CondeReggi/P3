@@ -65,10 +65,10 @@ Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
   // Con esto finalizamos la creacion del grafo
   // Buscar orden Topologico
   Cronologia cr = new evento[2 * n];
-  Lista vertices_de_g = vertices(g);
+  // Lista vertices_de_g = vertices(g);
   int index = 0;
   bool existeAlMenosUnNoIncidente = false;
-  for (int i = 1; i <= cantidad_vertices(g); i++){
+  for (nat i = 1; i <= cantidad_vertices(g); i++){
     if (in_grado(i, g) == 0){
       // Aca ya se que todos tienen 0 aristas incidentes
       evento nuevo;
@@ -91,6 +91,8 @@ Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
     }
   }
 
+  printf("Valor: %d", existeAlMenosUnNoIncidente);
+
   if (existeAlMenosUnNoIncidente){
     destruir_grafo(g);
     delete[] cr;
@@ -98,7 +100,6 @@ Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
     return NULL;
   }else{
     destruir_grafo(g);
-    delete[] cr;
     delete[] array;
     return cr;
   }
