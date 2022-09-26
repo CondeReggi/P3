@@ -25,36 +25,37 @@ Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
   while (!es_vacia_lista_datos(auxiliar1))
   {
     if (!existe_vertice(id1(primer_dato(auxiliar1)), g)){
-      array[id1(primer_dato(auxiliar1))] = 0;
+      array[id1(primer_dato(auxiliar1))] = nace;
       agregar_vertice(id1(primer_dato(auxiliar1)), g);
     }
     if (!existe_vertice(id2(primer_dato(auxiliar1)), g)){
-      array[id2(primer_dato(auxiliar1))] = 0;
+      array[id2(primer_dato(auxiliar1))] = muere;
       agregar_vertice(id2(primer_dato(auxiliar1)), g);
     }
 
     // Como son incidentes entonces: agregamos una arista (id1,id2) de tipo1
     agregar_arista(id1(primer_dato(auxiliar1)), id2(primer_dato(auxiliar1)), g);
-    array[id2(primer_dato(auxiliar1))]++;
     auxiliar1 = resto_datos(auxiliar1);
   }
 
-  while (!es_vacia_lista_datos(auxiliar2))
+  while (!es_vacia_lista_datos(auxiliar2)) //Esto esta mal armado creo
   {
     if (!existe_vertice(id1(primer_dato(auxiliar2)), g)){
-      array[id1(primer_dato(auxiliar2))] = 0;
+      if(array[id1(primer_dato(auxiliar2))] != -1){
+        array[id1(primer_dato(auxiliar2))] = nace;
+      }
       agregar_vertice(id1(primer_dato(auxiliar2)), g);
     }
     if (!existe_vertice(id2(primer_dato(auxiliar2)), g)){
-      array[id2(primer_dato(auxiliar2))] = 0;
+      if(array[id2(primer_dato(auxiliar2))] != -1){
+        array[id2(primer_dato(auxiliar2))] = nace;
+      }
       agregar_vertice(id2(primer_dato(auxiliar2)), g);
     }
 
     // Como son adyacentes entonces: agregamos una arista (id1,id2) y (id2,id1) de tipo2
     agregar_arista(id1(primer_dato(auxiliar2)), id2(primer_dato(auxiliar2)), g);
     agregar_arista(id2(primer_dato(auxiliar2)), id1(primer_dato(auxiliar2)), g);
-    array[id2(primer_dato(auxiliar2))]++;
-    array[id1(primer_dato(auxiliar2))]++;
     auxiliar2 = resto_datos(auxiliar2);
   }
 
@@ -72,26 +73,28 @@ Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
       // Aca ya se que todos tienen 0 aristas incidentes
       evento nuevo;
       nuevo.id = i;
-      nuevo.tipo = /* ¿como se si se muere o nace? */;
+      nuevo.tipo = tipo_evento(array[i]); /* ¿como se si se muere o nace? */; //Estructura auxiliar de murio, nace? por indice'
       cr[index] = nuevo;
       index = index + 1;
 
-      Lista adyacentes_a_v = adyacentes(i, g);
-
-      // Actualizo las adyacencias de los nodos que estan conectados
-      while (!es_vacia_lista(adyacentes_a_v)){
-        g->celda[primero(adyacentes_a_v)].ingrado--;
-        g->celda[primero(adyacentes_a_v)].outgrado--;
-        remover_al_inicio(adyacentes_a_v);
-      }
-
-      destruir_lista(adyacentes_a_v);
+      // No es necesario porque solo hay que dar un orden topologico, en caso de que haya se muestrea y listo sino, existeAlmenosUnNoIncicidente = true y no hay orden topologico
+      // Lista adyacentes_a_v = adyacentes(i, g);
+      // // Actualizo las adyacencias de los nodos que estan conectados NO ES NECESARIO DESTUIR LAS ARISTAS
+      // while (!es_vacia_lista(adyacentes_a_v)){
+      //   g->celda[primero(adyacentes_a_v)].ingrado--;
+      //   g->celda[primero(adyacentes_a_v)].outgrado--;
+      //   remover_al_inicio(adyacentes_a_v);
+      // }
+      // destruir_lista(adyacentes_a_v);
     }else{
       existeAlMenosUnNoIncidente = true;
     }
   }
 
   if (existeAlMenosUnNoIncidente){
+    destruir_grafo(g);
+    delete[] cr;
+    delete[] array;
     return NULL;
   }else{
     destruir_grafo(g);
@@ -101,31 +104,29 @@ Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
   }
 
   //Otra alternativa
-  int cantidad_sin_incidentes;
-  Lista L; /* Empty list that will contain the sorted elements */
-  Lista S; /* S ← Set of all nodes with no incoming edges */
+  // int cantidad_sin_incidentes;
+  // Lista L; /* Empty list that will contain the sorted elements */
+  // Lista S; /* S ← Set of all nodes with no incoming edges */
 
-  for (int i = 1; i <= cantidad_vertices(g); i++){
-    if(in_grado(i, g) == 0){
-      insertar_al_inicio(i, S);
-    }
-  }
+  // for (int i = 1; i <= cantidad_vertices(g); i++){
+  //   if(in_grado(i, g) == 0){
+  //     insertar_al_inicio(i, S);
+  //   }
+  // }
 
-  while(!es_vacia_lista(S)){
-    nat first = primero(S);
-    remover_al_inicio(S);
-    insertar_al_final(first, L);
+  // while(!es_vacia_lista(S)){
+  //   nat first = primero(S);
+  //   remover_al_inicio(S);
+  //   insertar_al_final(first, L);
 
     
-    Lista adyacentes_a_v = adyacentes(first, g);
-    while (!es_vacia_lista(adyacentes_a_v)){
-      //Remove arista (a1, b1) del grafo
+  //   Lista adyacentes_a_v = adyacentes(first, g);
+  //   while (!es_vacia_lista(adyacentes_a_v)){
+  //     //Remove arista (a1, b1) del grafo
 
 
-      array[primero(adyacentes_a_v)]--;
-      remover_al_inicio(adyacentes_a_v);
-    }
-  }
-
-
+  //     array[primero(adyacentes_a_v)]--;
+  //     remover_al_inicio(adyacentes_a_v);
+  //   }
+  // }
 }
