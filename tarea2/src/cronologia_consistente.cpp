@@ -31,28 +31,28 @@ Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
   imprimir_lista_datos(tipo2);
 
   while(!es_vacia_lista_datos(tipo1)){
-    agregar_vertice(2 * id1(primer_dato(tipo1)) - 1, g); // (1, nace) => 1 
-    agregar_vertice(2 * id1(primer_dato(tipo1)), g); // (1, muere) => 2
+    agregar_vertice(id1(primer_dato(tipo1)), g); // (1, nace) => 1 
+    agregar_vertice(id1(primer_dato(tipo1)) + n, g); // (1, muere) => 2
 
-    agregar_arista(2 * id1(primer_dato(tipo1)) - 1, 2 * id1(primer_dato(tipo1)), g); // (1, nace) -> (1, muere)
+    agregar_arista(id1(primer_dato(tipo1)), id1(primer_dato(tipo1)) + n, g); // (1, nace) -> (1, muere)
 
-    agregar_vertice(2 * id2(primer_dato(tipo1)) - 1, g); // (2, nace) => 3
-    agregar_vertice(2 * id2(primer_dato(tipo1)), g); // (2, muere) => 4
+    agregar_vertice(id2(primer_dato(tipo1)), g); // (2, nace) => 3
+    agregar_vertice(id2(primer_dato(tipo1)) + n, g); // (2, muere) => 4
 
-    agregar_arista(2 * id2(primer_dato(tipo1)) - 1, 2 * id2(primer_dato(tipo1)), g); // (2, nace) -> (2, muere)
-    agregar_arista(2 * id1(primer_dato(tipo1)), 2 * id2(primer_dato(tipo1)) - 1, g); // (1, muere) -> (2, nace).
+    agregar_arista(id2(primer_dato(tipo1)), id2(primer_dato(tipo1)) + n, g); // (2, nace) -> (2, muere)
+    agregar_arista(id1(primer_dato(tipo1)) + n, id2(primer_dato(tipo1)), g); // (1, muere) -> (2, nace).
     tipo1 = resto_datos(tipo1);
   }
 
   while(!es_vacia_lista_datos(tipo2)){
-    agregar_vertice(2 * id1(primer_dato(tipo2)) - 1, g); // (1, nace) => 1 
-    agregar_vertice(2 * id1(primer_dato(tipo2)), g); // (1, muere) => 2
+    agregar_vertice(id1(primer_dato(tipo2)), g); // (1, nace) => 1 
+    agregar_vertice(id1(primer_dato(tipo2)) + n, g); // (1, muere) => 2
 
-    agregar_vertice(2 * id2(primer_dato(tipo2)) - 1, g); // (2, nace) => 3
-    agregar_vertice(2 * id2(primer_dato(tipo2)), g); // (2, muere) => 4
+    agregar_vertice(id2(primer_dato(tipo2)), g); // (2, nace) => 3
+    agregar_vertice(id2(primer_dato(tipo2)) + n, g); // (2, muere) => 4
 
-    agregar_arista(2 * id2(primer_dato(tipo2)) - 1, 2 * id1(primer_dato(tipo2)), g); // (2, nace) -> (2, muere)
-    agregar_arista(2 * id1(primer_dato(tipo2)) - 1, 2 * id2(primer_dato(tipo2)), g); // (1, muere) -> (2, nace)
+    agregar_arista(id2(primer_dato(tipo2)), id1(primer_dato(tipo2)) + n, g); // (2, nace) -> (2, muere)
+    agregar_arista(id1(primer_dato(tipo2)) + n, id2(primer_dato(tipo2)), g); // (1, muere) -> (2, nace)
     tipo2 = resto_datos(tipo2);
   }
 
