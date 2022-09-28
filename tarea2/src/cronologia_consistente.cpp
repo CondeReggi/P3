@@ -15,12 +15,8 @@
 
 Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
 {
-  int* array = new int[9999999];
   int* muere_o_nace = new int[9999999];
-  for(int i = 0; i < (int)(2 * n + 1) ; i++){
-    array[i] = -1;
-  }
-
+  
   Grafo g = crear_grafo(2 * n + 1, true);
   for(nat i = 1; i <= n ; i++){
     agregar_vertice(i, g);
@@ -90,14 +86,12 @@ Cronologia cronologia_consistente(nat n, ListaDatos tipo1, ListaDatos tipo2)
 
   if(es_vacia_lista(vertices_de_g)){
     destruir_grafo(g);
-    delete[] array;
     delete[] array_de_grados;
     delete[] muere_o_nace;
     destruir_lista(vertices_de_g);
     return cr;
   }else{
     destruir_grafo(g);
-    delete[] array;
     delete[] array_de_grados;
     delete[] muere_o_nace;
     destruir_lista(vertices_de_g);
